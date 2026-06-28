@@ -1,7 +1,7 @@
-import sys, json, os
+import sys, json
 sys.path.append(".")
-from kg.build_graph import build_graph
-from kg.entity_linker import link_entities
+from kg.drkg_loader import load_drkg
+from kg.entity_linker import link_entities_drkg
 from kg.reasoning import get_paths
 from llm.generate import generate
 
@@ -15,15 +15,15 @@ def run_eval(n_samples=20):
         raw = json.load(f)
 
     items = list(raw.items())[:n_samples]
-    G = build_graph()
+    G = load_drkg()
     results = []
 
     for i, (pmid, ex) in enumerate(items):
         question   = ex["QUESTION"]
         gold_label = ex["final_decision"]
 
-        symptoms = link_entities(question, G)
-        paths    = get_paths(G, symptoms)
+        entities = link_entities_drkg(question, G)
+        paths    = get_paths(G, entities)
         answer, justification, _ = generate(question, paths)
 
         correct  = answer.strip().lower() == gold_label.strip().lower()

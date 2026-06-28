@@ -1,0 +1,18 @@
+HARD_QUESTIONS = [
+    ("Is oseltamivir the first-line treatment for influenza A with fever?", "yes"),
+    ("Is rifampicin combined with isoniazid used for tuberculosis?", "yes"),
+    ("Is salbutamol a bronchodilator used in asthma exacerbations?", "yes"),
+    ("Is amoxicillin appropriate for community-acquired pneumonia?", "yes"),
+    ("Is metformin the first-line pharmacotherapy for type 2 diabetes?", "yes"),
+    ("Is prednisone used as an anti-inflammatory in asthma?", "yes"),
+    ("Is ibuprofen used to reduce inflammation in rheumatoid arthritis?", "yes"),
+    ("Is dexamethasone used in severe pneumonia management?", "yes"),
+    ("Is oseltamivir effective for tuberculosis with cough and fatigue?", "no"),
+    ("Is salbutamol the primary treatment for type 2 diabetes?", "no"),
+    ("Is metformin used to treat asthma exacerbations?", "no"),
+    ("Is isoniazid used to treat influenza?", "no"),
+    ("Is amoxicillin the treatment of choice for influenza?", "no"),
+    ("Is rifampicin used to treat asthma with shortness of breath?", "no"),
+    ("Is ibuprofen first-line treatment for tuberculosis?", "no"),
+    ("Is prednisone curative for type 2 diabetes?", "no"),
+]

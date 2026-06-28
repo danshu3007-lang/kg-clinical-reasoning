@@ -5,12 +5,16 @@ client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
 SYSTEM = """You are a clinical reasoning assistant.
 Rules:
-- Use ONLY the provided knowledge graph paths.
-- Do NOT add medical facts not present in the paths.
-- If paths are insufficient to answer confidently, answer Maybe.
-- Always cite the exact path in your justification."""
+- If knowledge graph paths are provided, use ONLY those paths to answer.
+- If NO paths are provided or paths are irrelevant, use your medical knowledge but state this clearly.
+- Answer Yes if the treatment/drug is appropriate for the condition.
+- Answer No if the treatment/drug is NOT appropriate or wrong for the condition.
+- Answer Maybe only if genuinely uncertain even with background knowledge.
+- Always cite your reasoning."""
 
 def format_paths(paths):
+    if not paths:
+        return "No relevant paths found in knowledge graph."
     lines = []
     for i, p in enumerate(paths):
         chain = " → ".join(p["path"])
@@ -18,18 +22,19 @@ def format_paths(paths):
     return "\n".join(lines)
 
 def generate(question, paths):
-    if not paths:
-        return "Maybe", "No relevant paths found in knowledge graph.", []
-
     path_str = format_paths(paths)
+    has_paths = len(paths) > 0
+
     prompt = f"""Question: {question}
 
 Knowledge graph paths:
 {path_str}
 
+{"Use the paths above to answer." if has_paths else "No KG paths found. Use your medical knowledge to answer Yes or No. Do not default to Maybe unless genuinely uncertain."}
+
 Respond in exactly this format:
 Answer: Yes / No / Maybe
-Justification: [cite the exact path used]
+Justification: [cite path or medical reasoning]
 Confidence: High / Medium / Low"""
 
     resp = client.chat.completions.create(
@@ -60,7 +65,6 @@ if __name__ == "__main__":
     question = "Is oseltamivir appropriate for a patient with fever and cough?"
     symptoms = link_entities(question, G)
     paths    = get_paths(G, symptoms)
-
     answer, justification, _ = generate(question, paths)
     print(f"Question: {question}\n")
     print(justification)
